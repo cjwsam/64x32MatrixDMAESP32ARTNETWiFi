@@ -31,8 +31,8 @@ bool universesReceived[maxUniverses];
 bool sendFrame = 0;
 
 // WiFi INFO
-const char ssid[] = "Pretty Fly For A WiFi"; //"SLvi2000";
-const char pwd[] =  "server13" ;//"SL9278234";
+const char ssid[] = "TheWiFiInTheSky"; //replace with urs 
+const char pwd[] =  "TheWiFiInTheSkyPassword" ; //replace with urs 
 
 //On DMX *Artnet packet
 void onDmxFrame(uint16_t universe, uint16_t length, uint8_t sequence, uint8_t* data)
