@@ -40,7 +40,7 @@ void onDmxFrame(uint16_t universe, uint16_t length, uint8_t sequence, uint8_t* d
  
   sendFrame = 1;
  
- if (universe < maxUniverses) universesReceived[universe] = 1; // Store which universe has got in
+ if ((universe - startUniverse) >= 0 && (universe - startUniverse) < maxUniverses) universesReceived[universe - startUniverse] = 1; // Store which universe has got in
 
   for (int i = 0; i < length; i++) // Load data into the channelBuffer arrey at the right spot 
   {

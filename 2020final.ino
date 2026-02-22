@@ -58,7 +58,8 @@ ArtnetWifi artnet;
 bool passed = false;
 byte channelBuffer[numberOfChannels]; // Combined universes into a single array
 bool sendFrame = 0;
-bool universesReceived[numberOfChannels];
+const int maxUniverses = (numberOfChannels / 512 + ((numberOfChannels % 512) ? 1 : 0));
+bool universesReceived[maxUniverses];
 
 //WIFI Manager Bits
 char WIFI_SSID[20] ;
@@ -383,8 +384,9 @@ void onDmxFrame(uint16_t universe, uint16_t length, uint8_t sequence, uint8_t* d
 
   if (universe <= endUni && universe >= startUni)
   {
-
-    universesReceived[universe - startUni] = 1; // Store which universe has got in
+    int uniIndex = universe - startUni;
+    if (uniIndex >= 0 && uniIndex < maxUniverses)
+      universesReceived[uniIndex] = 1; // Store which universe has got in
 
     for (int i = 0; i < length ; i++) // Load data into the channelBuffer arrey at the right spot
     {
@@ -399,7 +401,9 @@ void onDmxFrame(uint16_t universe, uint16_t length, uint8_t sequence, uint8_t* d
   }
 
 
-  for (int i = 0; i < 12; i++) //check if all universes are there // must be 12 as start from 0-12 = 13 lol
+  int numUniverses = endUni - startUni + 1;
+  if (numUniverses > maxUniverses) numUniverses = maxUniverses;
+  for (int i = 0; i < numUniverses; i++) //check if all universes are there
   {
     if (universesReceived[i] == 0)
     {
@@ -429,7 +433,7 @@ void onDmxFrame(uint16_t universe, uint16_t length, uint8_t sequence, uint8_t* d
       }
 
     backgroundLayer.swapBuffers(); //Display the loaded frame
-    memset(universesReceived, 0, endUni);// Reset universeReceived to 0
+    memset(universesReceived, 0, sizeof(universesReceived));// Reset universeReceived to 0
   }
 }
 
@@ -511,7 +515,7 @@ void setup() {
   artnet.begin();
   artnet.setArtDmxCallback(onDmxFrame); //gets called if a frame arrives
 
-  bool universesReceived[endUni];
+  memset(universesReceived, 0, sizeof(universesReceived)); // Initialize universe tracking
 
 }
 
